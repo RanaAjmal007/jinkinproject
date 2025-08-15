@@ -11,7 +11,7 @@ pipeline {
     }
 
     environment {
-        PROJECT     = 'JenkinsTest/JenkinsTest.csproj'  // relative path inside repo
+        PROJECT     = 'JenkinsTest/JenkinsTest/JenkinsTest.csproj'  // relative path inside repo
         CONFIG      = 'Release'
         PUBLISH_DIR = 'build/publish'
     }
