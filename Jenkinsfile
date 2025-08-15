@@ -1,58 +1,45 @@
 pipeline {
-  agent any  // runs on your Windows Jenkins since that's what you installed
+    agent any
 
-  options {
-    timestamps()
-    ansiColor('xterm')
-  }
-
-  // For practice: poll every 2 minutes. You can switch to webhooks later.
-  triggers {
-    pollSCM('H/2 * * * *')
-  }
-
-  environment {
-    PROJECT     = 'JenkinsTest/JenkinsTest.csproj'  // <-- CHANGE THIS
-    CONFIG      = 'Release'
-    PUBLISH_DIR = 'build/publish'
-  }
-
-  stages {
-    stage('Checkout') {
-      steps { checkout scm }
+    options {
+        timestamps()
+        ansiColor('xterm')
     }
 
-    stage('Verify .NET SDK') {
-      steps { bat 'dotnet --info' }
+    triggers {
+        pollSCM('H/2 * * * *')
     }
 
-    stage('Restore') {
-      steps { bat 'dotnet restore "%PROJECT%"' }
+    environment {
+        PROJECT     = 'JenkinsTest/JenkinsTest.csproj'
+        CONFIG      = 'Release'
+        PUBLISH_DIR = 'build/publish'
     }
 
-    stage('Build') {
-      steps { bat 'dotnet build "%PROJECT%" -c %CONFIG% --no-restore' }
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+
+        stage('Verify .NET SDK') {
+            steps { bat 'dotnet --info' }
+        }
+
+        stage('Restore') {
+            steps { bat 'dotnet restore "%PROJECT%"' }
+        }
+
+        stage('Build') {
+            steps { bat 'dotnet build "%PROJECT%" -c %CONFIG% --no-restore' }
+        }
+
+        stage('Publish') {
+            steps { bat 'dotnet publish "%PROJECT%" -c %CONFIG% -o "%PUBLISH_DIR%" --no-build' }
+        }
     }
 
-    stage('Test (optional)') {
-      steps {
-        bat '''
-        if exist tests (
-          for /r tests %%F in (*.csproj) do dotnet test "%%F" -c %CONFIG% --no-build
-        ) else (
-          echo No tests folder found — skipping.
-        )
-        '''
-      }
+    post {
+        success { echo "✅ Build & publish complete. Output in: %PUBLISH_DIR%" }
+        failure { echo "❌ Build failed — check stage logs above." }
     }
-
-    stage('Publish') {
-      steps { bat 'dotnet publish "%PROJECT%" -c %CONFIG% -o "%PUBLISH_DIR%" --no-build' }
-    }
-  }
-
-  post {
-    success { echo "✅ Build & publish complete. Output in: %PUBLISH_DIR%" }
-    failure { echo "❌ Build failed — check stage logs above." }
-  }
 }
