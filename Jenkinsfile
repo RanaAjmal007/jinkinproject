@@ -12,7 +12,7 @@ pipeline {
   }
 
   environment {
-    PROJECT     = 'PROJECT = 'JenkinsTest/JenkinsTest.csproj'  // <-- CHANGE THIS
+    PROJECT     = 'JenkinsTest/JenkinsTest.csproj'  // <-- CHANGE THIS
     CONFIG      = 'Release'
     PUBLISH_DIR = 'build/publish'
   }
