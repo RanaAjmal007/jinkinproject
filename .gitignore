@@ -3,3 +3,8 @@
 ################################################################################
 
 /JenkinsTest/JenkinsTest/bin/Debug/net9.0
+/JenkinsTest/.vs/JenkinsTest/config
+/JenkinsTest/.vs/JenkinsTest/FileContentIndex
+/JenkinsTest/JenkinsTest/obj/Debug/net9.0/ref
+/JenkinsTest/JenkinsTest/obj/Debug/net9.0/refint
+/JenkinsTest/JenkinsTest/obj/Debug/net9.0/staticwebassets
