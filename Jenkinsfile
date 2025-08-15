@@ -7,11 +7,11 @@ pipeline {
     }
 
     triggers {
-        pollSCM('H/2 * * * *')
+        pollSCM('* * * * *')
     }
 
     environment {
-        PROJECT     = 'JenkinsTest/JenkinsTest.csproj'  // relative path inside repo
+        PROJECT     = 'JenkinsTest/JenkinsTest/JenkinsTest.csproj'  // relative path inside repo
         CONFIG      = 'Release'
         PUBLISH_DIR = 'build/publish'
     }
@@ -20,6 +20,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                bat 'dir'
             }
         }
 
