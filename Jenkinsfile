@@ -58,7 +58,7 @@ pipeline {
 
                     if (Test-Path $deployPath) {
                         New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
-                        Copy-Item -Path "$deployPath\\*" -Destination $backupPath -Recurse -Force
+                        Copy-Item -Path "$deployPath\\*.dll" -Destination $backupPath -Recurse -Force
                         Write-Host "✅ Backup completed at $backupPath"
                     } else {
                         Write-Host "⚠️ No existing deployment found, skipping backup"
