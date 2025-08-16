@@ -79,7 +79,7 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy to IIS') {
+          stage('Deploy to IIS') {
             steps {
                 powershell '''
                     Write-Host "🚀 Starting deployment to IIS..."
@@ -101,7 +101,7 @@ pipeline {
             }
         }
     }
-}
+    
     post {
         success {
             echo "✅ Build & publish complete. Output in: %PUBLISH_DIR%"
