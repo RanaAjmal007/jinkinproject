@@ -108,10 +108,9 @@ pipeline {
                     Write-Host "✅ IIS has been restarted"
                 '''
             }
-            }
-          }
-
+        }
     }
+
 
     post {
         success {
