@@ -49,17 +49,17 @@ pipeline {
                 bat 'dotnet publish "%PROJECT%" -c %CONFIG% -o "%PUBLISH_DIR%" --no-build'
             }
         }
-         stage('Backup IIS Deployment') {
+       stage('Backup IIS Deployment') {
             steps {
                 powershell '''
                     $timestamp = Get-Date -Format "yyyyMMddHHmmss"
                     $backupPath = "${env:BACKUP_DIR}\\Jenkinsapp_$timestamp"
                     $deployPath = "${env:DEPLOY_DIR}"
-
+        
                     if (Test-Path $deployPath) {
                         New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
-                        Copy-Item -Path "$deployPath\\*.dll" -Destination $backupPath -Recurse -Force
-                        Write-Host "✅ Backup completed at $backupPath"
+                        robocopy $deployPath $backupPath * /MIR /XO /XN /XC
+                        Write-Host "✅ Backup completed with only changed DLLs at $backupPath"
                     } else {
                         Write-Host "⚠️ No existing deployment found, skipping backup"
                     }
