@@ -60,8 +60,8 @@ pipeline {
                         Write-Host "✅ Starting backup of existing deployment..."
                         New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
                         
-                        # Run robocopy and capture its exit code
-                        robocopy $deployPath $backupPath /MIR /DCOPY:DAT /V
+                        # Run robocopy and capture its output to prevent immediate failure
+                        robocopy $deployPath $backupPath /MIR /DCOPY:DAT /V | Out-Null
                         $LastExitCode = $LASTEXITCODE
                         
                         # Check for a real failure (exit codes > 7)
@@ -74,6 +74,8 @@ pipeline {
                     } else {
                         Write-Host "⚠️ No existing deployment found, skipping backup."
                     }
+                    # Explicitly exit with a success code
+                    exit 0
                 '''
             }
         }
