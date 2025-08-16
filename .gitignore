@@ -27,3 +27,7 @@
 /JenkinsTest/.vs/JenkinsTest/v17
 /JenkinsTest/.vs/JenkinsTest/DesignTimeBuild
 /JenkinsTest/.vs/ProjectEvaluation
+/JenkinsTest/JenkinsTest/bin/Release/net9.0
+/JenkinsTest/JenkinsTest/.config
+/JenkinsTest/JenkinsTest/obj
+/JenkinsTest/JenkinsTest/Properties/PublishProfiles
