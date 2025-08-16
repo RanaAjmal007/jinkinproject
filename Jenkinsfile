@@ -47,6 +47,15 @@ pipeline {
                 bat 'dotnet publish "%PROJECT%" -c %CONFIG% -o "%PUBLISH_DIR%" --no-build'
             }
         }
+        stage('Deploy to IIS') {
+            steps {
+                 bat """
+                 xcopy /Y /E /I build\\publish C:\\inetpub\\MyWebAPI
+                 iisreset
+                 """
+    }
+}
+
     }
 
     post {
