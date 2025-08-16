@@ -80,27 +80,30 @@ pipeline {
             }
         }
           stage('Deploy to IIS') {
-            steps {
-                powershell '''
-                    Write-Host "🚀 Starting deployment to IIS..."
-                    $publishPath = "${env:WORKSPACE}\\build\\publish"
-                    $deployPath = "${env:DEPLOY_DIR}"
-                    robocopy $publishPath $deployPath /E /XO /FFT /V
-                    $LastExitCode = $LASTEXITCODE
-        
-                    if ($LastExitCode -le 7) {
-                        Write-Host "✅ Deployment completed with exit code: $LastExitCode"
-                    } else {
-                        Write-Error "❌ Robocopy deployment failed with exit code: $LastExitCode"
-                        exit 1
-                    }
-                    
-                    iisreset /timeout:60
-                    Write-Host "✅ IIS has been restarted"
-                '''
-            }
-        }
-    }
+                steps {
+                    powershell '''
+                        Write-Host "🚀 Starting deployment to IIS..."
+                        $publishPath = "${env:WORKSPACE}\\build\\publish"
+                        $deployPath = "${env:DEPLOY_DIR}"
+                        
+                        # Robocopy to copy only new or modified files
+                        robocopy $publishPath $deployPath /E /XO /FFT /V
+                        $LastExitCode = $LASTEXITCODE
+                
+                        # Check for a successful robocopy operation (codes <= 7)
+                        if ($LastExitCode -le 7) {
+                            Write-Host "✅ Deployment completed with exit code: $LastExitCode"
+                        } else {
+                            Write-Error "❌ Robocopy deployment failed with exit code: $LastExitCode"
+                            exit 1
+                        }
+                        
+                        # Restart IIS after deployment
+                        iisreset /timeout:60
+                        Write-Host "✅ IIS has been restarted"
+                    '''
+                }
+}
     
     post {
         success {
