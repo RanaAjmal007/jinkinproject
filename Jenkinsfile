@@ -82,7 +82,7 @@ pipeline {
         stage('Deploy to IIS') {
             steps {
                  bat """
-                 xcopy "build\\publish\\*" "%DEPLOY_DIR%\\" /Y /E /I
+                 xcopy "build\\publish\\*" "%DEPLOY_DIR%\\" /Y /E /I/D
                  iisreset
                  """
     }
