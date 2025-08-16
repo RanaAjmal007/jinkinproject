@@ -50,7 +50,7 @@ pipeline {
         stage('Deploy to IIS') {
             steps {
                  bat """
-                 xcopy /Y /E /I build\\publish C:\\inetpub\\MyWebAPI
+                 xcopy /Y /E /I build\\publish C:\inetpub\wwwroot\Jenkinsapp
                  iisreset
                  """
     }
