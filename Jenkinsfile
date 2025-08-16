@@ -14,6 +14,8 @@ pipeline {
         PROJECT     = 'JenkinsTest/JenkinsTest/JenkinsTest.csproj'  // relative path inside repo
         CONFIG      = 'Release'
         PUBLISH_DIR = 'build/publish'
+        DEPLOY_DIR  = 'C:\\inetpub\\wwwroot\\Jenkinsapp'
+        BACKUP_DIR  = 'D:\\IIS_Backup'
     }
 
     stages {
@@ -47,10 +49,27 @@ pipeline {
                 bat 'dotnet publish "%PROJECT%" -c %CONFIG% -o "%PUBLISH_DIR%" --no-build'
             }
         }
+         stage('Backup IIS Deployment') {
+            steps {
+                powershell '''
+                    $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+                    $backupPath = "${env:BACKUP_DIR}\\Jenkinsapp_$timestamp"
+                    $deployPath = "${env:DEPLOY_DIR}"
+
+                    if (Test-Path $deployPath) {
+                        New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
+                        Copy-Item -Path "$deployPath\\*" -Destination $backupPath -Recurse -Force
+                        Write-Host "✅ Backup completed at $backupPath"
+                    } else {
+                        Write-Host "⚠️ No existing deployment found, skipping backup"
+                    }
+                '''
+            }
+        }
         stage('Deploy to IIS') {
             steps {
                  bat """
-                 xcopy "build\\publish\\*" "C:\\inetpub\\wwwroot\\Jenkinsapp\\" /Y /E /I
+                 xcopy "build\\publish\\*" "%DEPLOY_DIR%\\" /Y /E /I
                  iisreset
                  """
     }
