@@ -91,6 +91,7 @@ pipeline {
             
                     if ($LastExitCode -le 7) {
                         Write-Host "✅ Deployment completed with exit code: $LastExitCode"
+                        exit 0
                     } else {
                         Write-Error "❌ Robocopy deployment failed with exit code: $LastExitCode"
                         exit 1
