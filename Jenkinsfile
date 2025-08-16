@@ -79,39 +79,33 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy to IIS') {
-            steps {
-                powershell '''
-                    Write-Host "🚀 Starting deployment to IIS..."
-                    $publishPath = "${env:WORKSPACE}\\build\\publish"
-                    $deployPath = "${env:DEPLOY_DIR}"
-        
-                    # Robocopy to copy only new or modified files
-                    # /E: Copies subdirectories, including empty ones.
-                    # /XO: Excludes older files, only copying new or modified ones.
-                    # /FFT: Assumes FAT file times to prevent minor timestamp differences from causing unnecessary copies.
-                    # /V: Produces verbose output for logging.
-                    robocopy $publishPath $deployPath /E /XO /FFT /V
-                    $LastExitCode = $LASTEXITCODE
-        
-                    # Check for a real failure (exit codes > 7)
-                    if ($LastExitCode -gt 7) {
-                        Write-Error "❌ Robocopy deployment failed with exit code: $LastExitCode"
-                        exit 1
-                    }
-                    
-                    Write-Host "✅ Deployment completed with exit code: $LastExitCode"
-                    
-                    # Restart IIS after deployment
-                    iisreset /timeout:60
-                    
-                    Write-Host "✅ IIS has been restarted"
-                '''
+       stage('Deploy to IIS') {
+    steps {
+        powershell '''
+            Write-Host "🚀 Starting deployment to IIS..."
+            $publishPath = "${env:WORKSPACE}\\build\\publish"
+            $deployPath = "${env:DEPLOY_DIR}"
+    
+            # Robocopy to copy only new or modified files
+            robocopy $publishPath $deployPath /E /XO /FFT /V
+            $LastExitCode = $LASTEXITCODE
+    
+            # Check for success (exit code <= 7 is OK)
+            if ($LastExitCode -le 7) {
+                Write-Host "✅ Deployment completed with exit code: $LastExitCode"
+            } else {
+                Write-Error "❌ Robocopy deployment failed with exit code: $LastExitCode"
+                exit 1
             }
-        }
+            
+            # Restart IIS after deployment
+            iisreset /timeout:60
+            
+            Write-Host "✅ IIS has been restarted"
+        '''
     }
-
-
+}
+  
     post {
         success {
             echo "✅ Build & publish complete. Output in: %PUBLISH_DIR%"
